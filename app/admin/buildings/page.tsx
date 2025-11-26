@@ -20,10 +20,13 @@ import {
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { useOrganization } from "@/components/organization-provider"
+import { filterByOrganization } from "@/lib/utils/tenant-filter"
 
 export default function BuildingsPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
+  const { organization, loading } = useOrganization()
   const [buildings, setBuildings] = useState(MOCK_BUILDINGS)
   const [searchTerm, setSearchTerm] = useState("")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -46,9 +49,11 @@ export default function BuildingsPage() {
     if (currentUser) setUser(currentUser)
   }, [])
 
-  if (!user) return null
+  if (!user || loading) return null
 
-  const filteredBuildings = buildings.filter(
+  const orgBuildings = organization ? filterByOrganization(buildings, organization.id) : buildings
+
+  const filteredBuildings = orgBuildings.filter(
     (b) =>
       b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       b.address.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -66,6 +71,7 @@ export default function BuildingsPage() {
 
     const building = {
       id: `bld-${Date.now()}`,
+      organization_id: organization?.id || "",
       name: newBuilding.name,
       address: newBuilding.address,
       units: Number.parseInt(newBuilding.units),
@@ -90,7 +96,7 @@ export default function BuildingsPage() {
     })
     toast({
       title: "Building Added",
-      description: `${building.name} has been successfully added to the system`,
+      description: `${building.name} has been successfully added to ${organization?.name}`,
     })
   }
 
@@ -111,7 +117,7 @@ export default function BuildingsPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">Buildings Management</h1>
-            <p className="text-muted-foreground">Manage your property portfolio</p>
+            <p className="text-muted-foreground">Manage your property portfolio • {organization?.name}</p>
           </div>
 
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>

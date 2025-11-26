@@ -1,8 +1,120 @@
-// Mock data for the prototype
+// Mock data for the prototype with multi-tenancy support
+
+export const MOCK_ORGANIZATIONS = [
+  {
+    id: "org-001",
+    name: "Swifthomes Properties",
+    slug: "swifthomes",
+    domain: null,
+    domain_type: "subdomain" as const,
+    email: "info@swifthomes.com",
+    phone: "+233 699 9907",
+    address: "Sakumono, Tema, Ghana",
+    timezone: "Africa/Accra",
+    currency: "GHS",
+    plan: "enterprise" as const,
+    status: "active" as const,
+    created_at: "2024-01-01T00:00:00Z",
+    settings: {
+      branding: {
+        primary_color: "#2563eb",
+        secondary_color: "#7c3aed",
+      },
+      features: {
+        smart_home: true,
+        virtual_tours: true,
+        solar_energy: true,
+        predictive_maintenance: true,
+        concierge_services: true,
+        waste_management: true,
+      },
+      notifications: {
+        email_enabled: true,
+        sms_enabled: true,
+        whatsapp_enabled: true,
+        push_enabled: true,
+      },
+      integrations: {},
+    },
+  },
+  {
+    id: "org-002",
+    name: "Premium Estates Ghana",
+    slug: "premium",
+    domain: null,
+    domain_type: "subdomain" as const,
+    email: "contact@premiumestates.gh",
+    phone: "+233 200 1234",
+    address: "East Legon, Accra, Ghana",
+    timezone: "Africa/Accra",
+    currency: "GHS",
+    plan: "professional" as const,
+    status: "active" as const,
+    created_at: "2024-03-15T00:00:00Z",
+    settings: {
+      branding: {
+        primary_color: "#059669",
+        secondary_color: "#f59e0b",
+      },
+      features: {
+        smart_home: true,
+        virtual_tours: true,
+        solar_energy: false,
+        predictive_maintenance: true,
+        concierge_services: true,
+        waste_management: true,
+      },
+      notifications: {
+        email_enabled: true,
+        sms_enabled: true,
+        whatsapp_enabled: false,
+        push_enabled: true,
+      },
+      integrations: {},
+    },
+  },
+  {
+    id: "org-003",
+    name: "Luxury Living Properties",
+    slug: "luxury",
+    domain: "properties.luxuryliving.com",
+    domain_type: "custom" as const,
+    email: "info@luxuryliving.com",
+    phone: "+233 244 567 890",
+    address: "Airport Residential, Accra, Ghana",
+    timezone: "Africa/Accra",
+    currency: "USD",
+    plan: "enterprise" as const,
+    status: "active" as const,
+    created_at: "2024-06-20T00:00:00Z",
+    settings: {
+      branding: {
+        primary_color: "#7c3aed",
+        secondary_color: "#ec4899",
+      },
+      features: {
+        smart_home: true,
+        virtual_tours: true,
+        solar_energy: true,
+        predictive_maintenance: true,
+        concierge_services: true,
+        waste_management: true,
+      },
+      notifications: {
+        email_enabled: true,
+        sms_enabled: true,
+        whatsapp_enabled: true,
+        push_enabled: true,
+      },
+      integrations: {},
+    },
+  },
+]
 
 export const MOCK_BUILDINGS = [
   {
     id: "bld-001",
+    organization_id: "org-001",
     name: "Sakumono Heights",
     address: "Plot 123, Sakumono, Tema, Ghana",
     units: 48,
@@ -12,6 +124,7 @@ export const MOCK_BUILDINGS = [
   },
   {
     id: "bld-002",
+    organization_id: "org-001",
     name: "Tema Gardens",
     address: "Community 2, Tema, Ghana",
     units: 36,
@@ -21,12 +134,23 @@ export const MOCK_BUILDINGS = [
   },
   {
     id: "bld-003",
+    organization_id: "org-001",
     name: "Accra Plaza",
     address: "Airport Residential, Accra, Ghana",
     units: 60,
     occupancy: 58,
     manager: "Grace Mensah",
     currency: "USD",
+  },
+  {
+    id: "bld-004",
+    organization_id: "org-002",
+    name: "East Legon Towers",
+    address: "East Legon, Accra, Ghana",
+    units: 72,
+    occupancy: 68,
+    manager: "Kwame Mensah",
+    currency: "GHS",
   },
 ]
 

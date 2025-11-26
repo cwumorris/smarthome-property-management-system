@@ -14,7 +14,7 @@ export default function PresentationPage() {
   const slides = [
     {
       id: 1,
-      title: "SLOANE SQUARE",
+      title: "Swifthomes",
       subtitle: "Property Management System",
       content: (
         <div className="text-center space-y-8">
@@ -24,7 +24,7 @@ export default function PresentationPage() {
             </div>
           </div>
           <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            SLOANE SQUARE
+            Swifthomes
           </h1>
           <p className="text-3xl text-slate-600 dark:text-slate-400">Property Management System</p>
           <div className="grid grid-cols-3 gap-8 mt-12">
@@ -496,7 +496,7 @@ export default function PresentationPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold">SLOANE SQUARE Presentation</h1>
+            <h1 className="text-2xl font-bold">Swifthomes Presentation</h1>
             <p className="text-sm text-muted-foreground">
               Slide {currentSlide + 1} of {allSlides.length}
             </p>

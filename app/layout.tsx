@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <title>SLOANE SQUARE - Property Management System</title>
+        <title>Swifthomes - Property Management System</title>
         <meta
           name="description"
           content="Comprehensive property management platform for 240+ buildings with smart home integration, rent collection, maintenance, and tenant services."
@@ -31,5 +31,5 @@ export default function RootLayout({
 }
 
 export const metadata = {
-      generator: 'v0.app'
-    };
+  generator: "v0.app",
+}

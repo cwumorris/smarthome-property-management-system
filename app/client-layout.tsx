@@ -8,6 +8,8 @@ import { Toaster } from "@/components/ui/toaster"
 import { FABChatbot } from "@/components/fab-chatbot"
 import { usePathname } from "next/navigation"
 import { getCurrentUser } from "@/lib/auth"
+import { OrganizationProvider } from "@/components/organization-provider"
+import { OrganizationBranding } from "@/components/organization-branding"
 
 function ClientLayout({
   children,
@@ -23,7 +25,8 @@ function ClientLayout({
   const isHomePage = pathname === "/"
 
   return (
-    <>
+    <OrganizationProvider>
+      <OrganizationBranding />
       {showSidebar ? (
         <>
           <Sidebar />
@@ -38,7 +41,7 @@ function ClientLayout({
       <FABChatbot />
       <Toaster />
       <Analytics />
-    </>
+    </OrganizationProvider>
   )
 }
 

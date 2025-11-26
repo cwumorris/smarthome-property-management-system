@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Building2, User, LogOut, Menu, X, Presentation } from 'lucide-react'
+import { Building2, User, LogOut, Menu, X, Presentation } from "lucide-react"
 import { getUser, logout } from "@/lib/auth"
 import { ThemeToggle } from "@/components/theme-toggle"
 
@@ -33,7 +33,7 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-lg">
             <Building2 className="h-6 w-6 text-primary" />
-            SLOANE SQUARE
+            Swifthomes
           </Link>
 
           {/* Desktop Navigation */}

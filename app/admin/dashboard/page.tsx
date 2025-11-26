@@ -8,23 +8,27 @@ import { Building2, Users, Wrench, DollarSign, AlertCircle, CheckCircle, Clock }
 import { MOCK_BUILDINGS, MOCK_TICKETS, MOCK_PAYMENTS } from "@/lib/mock-data"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useOrganization } from "@/components/organization-provider"
+import { filterByOrganization } from "@/lib/utils/tenant-filter"
 
 export default function AdminDashboard() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
+  const { organization, loading } = useOrganization()
 
   useEffect(() => {
     const currentUser = requireAuth(["super_admin", "property_admin", "maintenance_supervisor", "finance"])
     if (currentUser) setUser(currentUser)
   }, [])
 
-  if (!user) return null
+  if (!user || loading) return null
 
-  const totalBuildings = MOCK_BUILDINGS.length
+  const orgBuildings = organization ? filterByOrganization(MOCK_BUILDINGS, organization.id) : []
+  const totalBuildings = orgBuildings.length
   const portfolios = 3
-  const totalUnits = MOCK_BUILDINGS.reduce((sum, b) => sum + b.units, 0)
-  const occupiedUnits = MOCK_BUILDINGS.reduce((sum, b) => sum + b.occupancy, 0)
-  const occupancyRate = ((occupiedUnits / totalUnits) * 100).toFixed(1)
+  const totalUnits = orgBuildings.reduce((sum, b) => sum + b.units, 0)
+  const occupiedUnits = orgBuildings.reduce((sum, b) => sum + b.occupancy, 0)
+  const occupancyRate = totalUnits > 0 ? ((occupiedUnits / totalUnits) * 100).toFixed(1) : "0.0"
 
   const openTickets = MOCK_TICKETS.filter((t) => t.status === "open").length
   const inProgressTickets = MOCK_TICKETS.filter((t) => t.status === "in_progress").length
@@ -80,7 +84,7 @@ export default function AdminDashboard() {
       <div className="container mx-auto">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+            <h1 className="text-3xl font-bold mb-2">{organization?.name} Dashboard</h1>
             <p className="text-muted-foreground">
               You manage {totalBuildings} buildings across {portfolios} portfolios
             </p>

@@ -2,16 +2,17 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Building2, Chrome, Mail } from "lucide-react"
+import { Building2, Chrome, Mail, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 // Simulated OAuth providers
 const OAUTH_PROVIDERS = [
@@ -27,62 +28,75 @@ const OAUTH_PROVIDERS = [
 
 // Pre-configured demo users
 const DEMO_USERS = {
-  "admin@sloane.com": { password: "admin123", role: "super_admin", name: "Super Admin" },
-  "property@sloane.com": { password: "property123", role: "property_admin", name: "Property Manager" },
-  "tenant@sloane.com": { password: "tenant123", role: "tenant", name: "John Tenant" },
-  "service@sloane.com": { password: "service123", role: "service_provider", name: "Fix-It Services" },
-  "concierge@sloane.com": { password: "concierge123", role: "concierge", name: "Jane Concierge" },
+  "admin@swifthomes.com": { password: "admin123", role: "super_admin", name: "Super Admin" },
+  "property@swifthomes.com": { password: "property123", role: "property_admin", name: "Property Manager" },
+  "tenant@swifthomes.com": { password: "tenant123", role: "tenant", name: "John Tenant" },
+  "service@swifthomes.com": { password: "service123", role: "service_provider", name: "Fix-It Services" },
+  "concierge@swifthomes.com": { password: "concierge123", role: "concierge", name: "Jane Concierge" },
 }
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [showRegistrationSuccess, setShowRegistrationSuccess] = useState(false)
+
+  useEffect(() => {
+    if (searchParams.get("registered") === "true") {
+      setShowRegistrationSuccess(true)
+      setTimeout(() => setShowRegistrationSuccess(false), 5000)
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
-    // Simulate authentication
     setTimeout(() => {
-      const user = DEMO_USERS[email as keyof typeof DEMO_USERS]
+      // First check demo users
+      const demoUser = DEMO_USERS[email as keyof typeof DEMO_USERS]
 
-      if (user && user.password === password) {
-        // Store user session in localStorage (simulated)
+      if (demoUser && demoUser.password === password) {
         localStorage.setItem(
-          "sloane_user",
+          "swifthomes_user",
           JSON.stringify({
             email,
-            role: user.role,
-            name: user.name,
+            role: demoUser.role,
+            name: demoUser.name,
             authenticated: true,
           }),
         )
-
-        // Redirect based on role
-        switch (user.role) {
-          case "super_admin":
-          case "property_admin":
-            router.push("/admin/dashboard")
-            break
-          case "tenant":
-            router.push("/tenant/dashboard")
-            break
-          case "service_provider":
-            router.push("/service-provider/dashboard")
-            break
-          case "concierge":
-            router.push("/concierge/dashboard")
-            break
-          default:
-            router.push("/dashboard")
-        }
-      } else {
-        setError("Invalid credentials. Try one of the demo accounts.")
+        redirectByRole(demoUser.role)
+        return
       }
+
+      const registeredUsersStr = localStorage.getItem("swifthomes_registered_users")
+      if (registeredUsersStr) {
+        const registeredUsers = JSON.parse(registeredUsersStr)
+        const registeredUser = registeredUsers[email]
+
+        if (registeredUser && registeredUser.password === password) {
+          localStorage.setItem(
+            "swifthomes_user",
+            JSON.stringify({
+              email,
+              role: registeredUser.role,
+              name: registeredUser.name,
+              phone: registeredUser.phone,
+              authenticated: true,
+            }),
+          )
+          redirectByRole(registeredUser.role)
+          return
+        }
+      }
+
+      // If neither matched, show error
+      setError("Invalid credentials. Try one of the demo accounts or register a new account.")
       setLoading(false)
     }, 1000)
   }
@@ -96,7 +110,7 @@ export default function LoginPage() {
       const user = DEMO_USERS[email as keyof typeof DEMO_USERS]
       if (user) {
         localStorage.setItem(
-          "sloane_user",
+          "swifthomes_user",
           JSON.stringify({
             email,
             role: user.role,
@@ -105,21 +119,7 @@ export default function LoginPage() {
           }),
         )
 
-        switch (user.role) {
-          case "super_admin":
-          case "property_admin":
-            router.push("/admin/dashboard")
-            break
-          case "tenant":
-            router.push("/tenant/dashboard")
-            break
-          case "service_provider":
-            router.push("/service-provider/dashboard")
-            break
-          case "concierge":
-            router.push("/concierge/dashboard")
-            break
-        }
+        redirectByRole(user.role)
       }
       setLoading(false)
     }, 800)
@@ -130,7 +130,7 @@ export default function LoginPage() {
     // Simulate OAuth flow
     setTimeout(() => {
       localStorage.setItem(
-        "sloane_user",
+        "swifthomes_user",
         JSON.stringify({
           email: `user@${provider.toLowerCase()}.com`,
           role: "tenant",
@@ -143,6 +143,26 @@ export default function LoginPage() {
     }, 1500)
   }
 
+  const redirectByRole = (role: string) => {
+    switch (role) {
+      case "super_admin":
+      case "property_admin":
+        router.push("/admin/dashboard")
+        break
+      case "tenant":
+        router.push("/tenant/dashboard")
+        break
+      case "service_provider":
+        router.push("/service-provider/dashboard")
+        break
+      case "concierge":
+        router.push("/concierge/dashboard")
+        break
+      default:
+        router.push("/dashboard")
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
       <Card className="w-full max-w-md">
@@ -150,10 +170,19 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
             <Building2 className="h-12 w-12 text-primary" />
           </div>
-          <CardTitle className="text-2xl">SLOANE SQUARE</CardTitle>
+          <CardTitle className="text-2xl">Swifthomes</CardTitle>
           <CardDescription>Property Management System</CardDescription>
         </CardHeader>
         <CardContent>
+          {showRegistrationSuccess && (
+            <Alert className="mb-4 border-green-200 bg-green-50 dark:bg-green-950">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-600 dark:text-green-400">
+                Account created successfully! You can now login with your credentials.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>

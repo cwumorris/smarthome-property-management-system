@@ -2,13 +2,41 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from 'next/navigation'
+import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Building2, Users, Wrench, DollarSign, Package, Settings, Wifi, Recycle, Zap, FileText, ChevronLeft, LogOut, Menu, Home, CreditCard, Mail, BarChart3, CheckSquare, UserPlus, Bell, Calendar, Camera, TrendingUp, Sun } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Building2,
+  Users,
+  Wrench,
+  DollarSign,
+  Package,
+  Settings,
+  Wifi,
+  Recycle,
+  Zap,
+  FileText,
+  ChevronLeft,
+  LogOut,
+  Menu,
+  Home,
+  CreditCard,
+  Mail,
+  BarChart3,
+  CheckSquare,
+  UserPlus,
+  Bell,
+  Calendar,
+  Camera,
+  TrendingUp,
+  Sun,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation"
 import { getCurrentUser, logout } from "@/lib/auth"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useOrganization } from "@/components/organization-provider"
+import { OrganizationSwitcher } from "@/components/organization-switcher"
 
 const adminRoutes = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
@@ -52,23 +80,34 @@ const serviceProviderRoutes = [
   { name: "Settings", href: "/service-provider/settings", icon: Settings },
 ]
 
+const superAdminRoutes = [
+  { name: "Dashboard", href: "/super-admin/dashboard", icon: LayoutDashboard },
+  { name: "Organizations", href: "/super-admin/organizations", icon: Building2 },
+  { name: "Users", href: "/admin/users", icon: Users },
+  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { name: "Settings", href: "/admin/settings", icon: Settings },
+]
+
 export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const user = getCurrentUser()
+  const { organization } = useOrganization()
 
   if (!user) return null
 
   const routes =
-    user.role === "tenant"
-      ? tenantRoutes
-      : user.role === "service_provider"
-        ? serviceProviderRoutes
-        : user.role === "concierge"
-          ? conciergeRoutes
-          : adminRoutes
+    user.role === "super_admin"
+      ? superAdminRoutes
+      : user.role === "tenant"
+        ? tenantRoutes
+        : user.role === "service_provider"
+          ? serviceProviderRoutes
+          : user.role === "concierge"
+            ? conciergeRoutes
+            : adminRoutes
 
   const handleLogout = () => {
     logout()
@@ -81,10 +120,19 @@ export function Sidebar() {
       <div className="flex h-16 items-center justify-between border-b px-6">
         <Link href="/" className="flex items-center gap-2">
           <Home className="h-6 w-6 text-primary" />
-          {!collapsed && <span className="font-bold text-lg">SLOANE SQUARE</span>}
+          {!collapsed && <span className="font-bold text-lg">Swifthomes</span>}
         </Link>
         {!collapsed && <ThemeToggle />}
       </div>
+
+      {!collapsed && user.role !== "tenant" && user.role !== "service_provider" && organization && (
+        <div className="border-b p-4">
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground uppercase">Organization</p>
+            <OrganizationSwitcher />
+          </div>
+        </div>
+      )}
 
       {/* User Info */}
       <div className="border-b p-4">

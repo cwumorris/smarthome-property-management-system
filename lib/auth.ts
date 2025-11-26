@@ -1,8 +1,9 @@
-// Simulated authentication utilities
+// Simulated authentication utilities with multi-tenancy support
 
 export interface User {
   email: string
   name: string
+  organization_id: string // Links user to their organization
   role:
     | "super_admin"
     | "property_admin"
@@ -22,7 +23,7 @@ export interface User {
 export function getUser(): User | null {
   if (typeof window === "undefined") return null
 
-  const userStr = localStorage.getItem("sloane_user")
+  const userStr = localStorage.getItem("swifthomes_user")
   if (!userStr) return null
 
   try {
@@ -38,7 +39,8 @@ export function getCurrentUser(): User | null {
 
 export function logout() {
   if (typeof window !== "undefined") {
-    localStorage.removeItem("sloane_user")
+    localStorage.removeItem("swifthomes_user")
+    localStorage.removeItem("swifthomes_organization")
     window.location.href = "/auth/login"
   }
 }
@@ -55,7 +57,7 @@ export function requireAuth(allowedRoles?: string[]) {
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     if (typeof window !== "undefined") {
-      window.location.href = "/unauthorized"
+      window.location.href = "/"
     }
     return null
   }

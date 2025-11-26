@@ -72,7 +72,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Building2 className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">SLOANE SQUARE</span>
+            <span className="text-xl font-bold">Swifthomes</span>
           </div>
           <div className="flex items-center gap-4">
             <ThemeToggle />
@@ -88,7 +88,7 @@ export default function HomePage() {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            SLOANE SQUARE
+            Swifthomes
           </h1>
           <p className="text-2xl text-slate-700 dark:text-slate-300 mb-2">Property Management System</p>
           <p className="text-sm text-slate-600 dark:text-slate-400 mb-8">
@@ -229,7 +229,7 @@ export default function HomePage() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Building2 className="h-6 w-6 text-primary" />
-                <span className="font-bold">SLOANE SQUARE</span>
+                <span className="font-bold">Swifthomes</span>
               </div>
               <p className="text-sm text-muted-foreground">Modern property management with smart home integration</p>
             </div>
@@ -273,12 +273,12 @@ export default function HomePage() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>Sakumono, Tema, Ghana</li>
                 <li>+233 699 9907</li>
-                <li>info@sloanesquare.com</li>
+                <li>info@swifthomes.com</li>
               </ul>
             </div>
           </div>
           <div className="border-t mt-8 pt-6 text-center text-sm text-muted-foreground">
-            © 2025 SLOANE SQUARE Property Management. All rights reserved.
+            © 2025 Swifthomes Property Management. All rights reserved.
           </div>
         </div>
       </footer>

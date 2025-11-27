@@ -41,6 +41,7 @@ import { OrganizationSwitcher } from "@/components/organization-switcher"
 const adminRoutes = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Buildings", href: "/admin/buildings", icon: Building2 },
+  { name: "HOA Billing", href: "/admin/hoa-billing", icon: DollarSign }, // Added HOA Billing route for admins
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Tickets", href: "/admin/tickets", icon: Wrench },
   { name: "Mailroom", href: "/admin/mailroom", icon: Mail },

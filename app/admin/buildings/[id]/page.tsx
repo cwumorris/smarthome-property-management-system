@@ -28,6 +28,11 @@ export default function BuildingDetailPage() {
   const { toast } = useToast()
   const [user, setUser] = useState<any>(null)
 
+  const [buildings] = useState(() => {
+    const saved = getFromLocalStorage("buildings", [])
+    return saved.length > 0 ? saved : MOCK_BUILDINGS
+  })
+
   const [units, setUnits] = useState(() => {
     const savedUnits = getFromLocalStorage(`building_${params.id}_units`, [])
     return savedUnits.length > 0 ? savedUnits : []
@@ -47,7 +52,7 @@ export default function BuildingDetailPage() {
     tenant_name: "",
   })
 
-  const building = MOCK_BUILDINGS.find((b) => b.id === params.id)
+  const building = buildings.find((b) => b.id === params.id)
 
   useEffect(() => {
     const currentUser = requireAuth(["super_admin", "property_admin"])

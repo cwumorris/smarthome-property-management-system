@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -73,6 +73,21 @@ export default function OnboardingPage() {
     agreedToTerms: false,
   })
 
+  useEffect(() => {
+    const onboardingUser = localStorage.getItem("onboarding_user")
+    if (onboardingUser) {
+      const userData = JSON.parse(onboardingUser)
+      setFormData((prev) => ({
+        ...prev,
+        adminName: userData.name,
+        adminEmail: userData.email,
+        adminPassword: userData.password,
+        phone: userData.phone,
+        email: userData.email,
+      }))
+    }
+  }, [])
+
   const updateFormData = (field: string, value: any) => {
     setFormData({ ...formData, [field]: value })
   }
@@ -117,13 +132,58 @@ export default function OnboardingPage() {
       return
     }
 
+    const organizationId = `org-${Date.now()}`
+    const domain = formData.domainType === "subdomain" ? `${formData.subdomain}.swifthomes.com` : formData.customDomain
+
+    const organization = {
+      id: organizationId,
+      name: formData.companyName,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      country: formData.country,
+      timezone: formData.timezone,
+      currency: formData.currency,
+      domain: domain,
+      subdomain: formData.domainType === "subdomain" ? formData.subdomain : null,
+      customDomain: formData.domainType === "custom" ? formData.customDomain : null,
+      plan: formData.plan,
+      status: "active",
+      createdAt: new Date().toISOString(),
+      branding: {
+        primaryColor: "#3B82F6",
+        logo: null,
+      },
+    }
+
+    const orgsStr = localStorage.getItem("swifthomes_organizations")
+    const orgs = orgsStr ? JSON.parse(orgsStr) : []
+    orgs.push(organization)
+    localStorage.setItem("swifthomes_organizations", JSON.stringify(orgs))
+
+    const registeredUsersStr = localStorage.getItem("swifthomes_registered_users")
+    const registeredUsers = registeredUsersStr ? JSON.parse(registeredUsersStr) : {}
+
+    registeredUsers[formData.adminEmail] = {
+      password: formData.adminPassword,
+      role: "property_admin",
+      name: formData.adminName,
+      phone: formData.phone,
+      organization_id: organizationId,
+      createdAt: new Date().toISOString(),
+    }
+
+    localStorage.setItem("swifthomes_registered_users", JSON.stringify(registeredUsers))
+
+    localStorage.removeItem("onboarding_user")
+
     toast({
-      title: "Account Created!",
-      description: `Welcome to SLOANE SQUARE, ${formData.companyName}!`,
+      title: "Organization Created!",
+      description: `Welcome to Swifthomes, ${formData.companyName}!`,
     })
 
     setTimeout(() => {
-      router.push("/admin/dashboard")
+      router.push("/auth/login?onboarded=true")
     }, 2000)
   }
 
@@ -141,7 +201,7 @@ export default function OnboardingPage() {
           <div className="mb-4 flex items-center justify-center">
             <Building2 className="h-12 w-12 text-primary" />
           </div>
-          <h1 className="mb-2 text-3xl font-bold">Welcome to SLOANE SQUARE</h1>
+          <h1 className="mb-2 text-3xl font-bold">Welcome to Swifthomes</h1>
           <p className="text-muted-foreground">Set up your property management platform in minutes</p>
         </div>
 

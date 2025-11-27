@@ -22,12 +22,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast"
 import { useOrganization } from "@/components/organization-provider"
 import { filterByOrganization } from "@/lib/utils/tenant-filter"
+import { getFromLocalStorage, saveToLocalStorage } from "@/lib/local-storage"
 
 export default function BuildingsPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const { organization, loading } = useOrganization()
-  const [buildings, setBuildings] = useState(MOCK_BUILDINGS)
+  const [buildings, setBuildings] = useState(() => {
+    const saved = getFromLocalStorage("buildings", [])
+    return saved.length > 0 ? saved : MOCK_BUILDINGS
+  })
   const [searchTerm, setSearchTerm] = useState("")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingBuilding, setEditingBuilding] = useState<any>(null)
@@ -48,6 +52,12 @@ export default function BuildingsPage() {
     const currentUser = requireAuth(["super_admin", "property_admin"])
     if (currentUser) setUser(currentUser)
   }, [])
+
+  useEffect(() => {
+    if (buildings.length > 0) {
+      saveToLocalStorage("buildings", buildings)
+    }
+  }, [buildings])
 
   if (!user || loading) return null
 
@@ -279,7 +289,7 @@ export default function BuildingsPage() {
                     <Users className="h-4 w-4 text-muted-foreground" />
                     <div>
                       <div className="text-sm text-muted-foreground">Occupancy</div>
-                      <div className="font-semibold">
+                      <div className="font-medium">
                         {building.occupancy}/{building.units} (
                         {((building.occupancy / building.units) * 100).toFixed(0)}%)
                       </div>
